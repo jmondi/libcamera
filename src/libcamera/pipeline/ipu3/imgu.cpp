@@ -42,7 +42,7 @@ static constexpr unsigned int BDS_ALIGN_W = 2;
 static constexpr unsigned int BDS_ALIGN_H = 4;
 
 static constexpr unsigned int IF_CROP_MAX_W = 40;
-static constexpr unsigned int IF_CROP_MAX_H = 540;
+static constexpr unsigned int IF_CROP_MAX_H = 40;
 
 static constexpr float BDS_SF_MAX = 2.5;
 static constexpr float BDS_SF_MIN = 1.0;

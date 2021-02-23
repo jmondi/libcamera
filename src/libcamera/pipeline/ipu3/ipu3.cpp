@@ -273,6 +273,9 @@ CameraConfiguration::Status IPU3CameraConfiguration::validate()
 	if (!cio2Configuration_.pixelFormat.isValid())
 		return Invalid;
 
+	cio2Configuration_.size.width = 2112;
+	cio2Configuration_.size.height = 1568;
+
 	LOG(IPU3, Error) << "CIO2 configuration: " << cio2Configuration_.toString();
 
 	ImgUDevice::Pipe pipe{};

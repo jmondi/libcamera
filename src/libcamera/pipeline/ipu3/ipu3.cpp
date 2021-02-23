@@ -263,14 +263,17 @@ CameraConfiguration::Status IPU3CameraConfiguration::validate()
 	 * bus bandwidth. When only a raw stream is requested use the requested
 	 * size instead, as the ImgU is not involved.
 	 */
-	if (!yuvCount)
-		cio2Configuration_ = data_->cio2_.generateConfiguration(rawSize);
-	else
-		cio2Configuration_ = data_->cio2_.generateConfiguration({});
+
+       if (rawSize.isNull())
+               rawSize = maxYuvSize.alignedUpTo(IMGU_OUTPUT_WIDTH_MARGIN,
+                                                IMGU_OUTPUT_HEIGHT_MARGIN)
+                                   .boundedTo(data_->cio2_.sensor()->resolution());
+
+	cio2Configuration_ = data_->cio2_.generateConfiguration(rawSize);
 	if (!cio2Configuration_.pixelFormat.isValid())
 		return Invalid;
 
-	LOG(IPU3, Debug) << "CIO2 configuration: " << cio2Configuration_.toString();
+	LOG(IPU3, Error) << "CIO2 configuration: " << cio2Configuration_.toString();
 
 	ImgUDevice::Pipe pipe{};
 	pipe.input = cio2Configuration_.size;

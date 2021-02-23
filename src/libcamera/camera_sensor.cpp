@@ -625,6 +625,7 @@ V4L2SubdeviceFormat CameraSensor::getFormat(const std::vector<unsigned int> &mbu
  */
 int CameraSensor::setFormat(V4L2SubdeviceFormat *format)
 {
+	LOG(Error) << "Set sensor format : " << format->toString();
 	return subdev_->setFormat(pad_, format);
 }
 

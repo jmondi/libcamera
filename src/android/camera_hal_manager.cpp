@@ -29,7 +29,8 @@ LOG_DECLARE_CATEGORY(HAL)
  */
 
 CameraHalManager::CameraHalManager()
-	: cameraManager_(nullptr), callbacks_(nullptr), numInternalCameras_(0),
+	: cameraManager_(nullptr), callbacks_(nullptr),
+	  externalCameraSupport_(false), numInternalCameras_(0),
 	  nextExternalCameraId_(firstExternalCameraId_)
 {
 }
@@ -115,7 +116,8 @@ void CameraHalManager::cameraAdded(std::shared_ptr<Camera> cam)
 		 * Now check if this is an external camera and assign
 		 * its id accordingly.
 		 */
-		if (cameraLocation(cam.get()) == properties::CameraLocationExternal) {
+		if (cameraLocation(cam.get()) == properties::CameraLocationExternal &&
+		    externalCameraSupport_) {
 			isCameraExternal = true;
 			id = nextExternalCameraId_;
 		} else {
@@ -124,7 +126,8 @@ void CameraHalManager::cameraAdded(std::shared_ptr<Camera> cam)
 	}
 
 	/* Create a CameraDevice instance to wrap the libcamera Camera. */
-	std::shared_ptr<CameraDevice> camera = CameraDevice::create(id, std::move(cam));
+	std::shared_ptr<CameraDevice> camera =
+		CameraDevice::create(id, std::move(cam), externalCameraSupport_);
 	int ret = camera->initialize();
 	if (ret) {
 		LOG(HAL, Error) << "Failed to initialize camera: " << cam->id();
@@ -134,7 +137,7 @@ void CameraHalManager::cameraAdded(std::shared_ptr<Camera> cam)
 	if (isCameraNew) {
 		cameraIdsMap_.emplace(cam->id(), id);
 
-		if (isCameraExternal)
+		if (isCameraExternal && externalCameraSupport_)
 			nextExternalCameraId_++;
 		else
 			numInternalCameras_++;

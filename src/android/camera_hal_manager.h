@@ -54,6 +54,8 @@ private:
 	std::map<std::string, unsigned int> cameraIdsMap_;
 	Mutex mutex_;
 
+	const bool externalCameraSupport_;
+
 	unsigned int numInternalCameras_;
 	unsigned int nextExternalCameraId_;
 };

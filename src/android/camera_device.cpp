@@ -312,9 +312,11 @@ CameraDevice::Camera3RequestDescriptor::~Camera3RequestDescriptor()
  * back to the framework using the designated callbacks.
  */
 
-CameraDevice::CameraDevice(unsigned int id, const std::shared_ptr<Camera> &camera)
+CameraDevice::CameraDevice(unsigned int id, const std::shared_ptr<Camera> &camera,
+			   bool externalCameraSupport)
 	: id_(id), running_(false), camera_(camera), staticMetadata_(nullptr),
-	  facing_(CAMERA_FACING_FRONT), orientation_(0)
+	  facing_(CAMERA_FACING_FRONT), orientation_(0),
+	  externalCameraSupport_(externalCameraSupport)
 {
 	camera_->requestCompleted.connect(this, &CameraDevice::requestComplete);
 
@@ -351,9 +353,10 @@ CameraDevice::~CameraDevice()
 }
 
 std::shared_ptr<CameraDevice> CameraDevice::create(unsigned int id,
-						   const std::shared_ptr<Camera> &cam)
+						   const std::shared_ptr<Camera> &cam,
+						   bool externalCameraSupport)
 {
-	CameraDevice *camera = new CameraDevice(id, cam);
+	CameraDevice *camera = new CameraDevice(id, cam, externalCameraSupport);
 	return std::shared_ptr<CameraDevice>(camera);
 }
 
@@ -376,11 +379,10 @@ int CameraDevice::initialize()
 			facing_ = CAMERA_FACING_BACK;
 			break;
 		case properties::CameraLocationExternal:
-			/*
-			 * \todo Set this to EXTERNAL once we support
-			 * HARDWARE_LEVEL_EXTERNAL
-			 */
-			facing_ = CAMERA_FACING_FRONT;
+			if (externalCameraSupport_)
+				facing_ = CAMERA_FACING_EXTERNAL;
+			else
+				facing_ = CAMERA_FACING_FRONT;
 			break;
 		}
 	}
@@ -1164,7 +1166,9 @@ const camera_metadata_t *CameraDevice::getStaticMetadata()
 	staticMetadata_->addEntry(ANDROID_SCALER_CROPPING_TYPE, &croppingType, 1);
 
 	/* Info static metadata. */
-	uint8_t supportedHWLevel = ANDROID_INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED;
+	uint8_t supportedHWLevel = externalCameraSupport_ ?
+				   ANDROID_INFO_SUPPORTED_HARDWARE_LEVEL_EXTERNAL :
+				   ANDROID_INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED;
 	staticMetadata_->addEntry(ANDROID_INFO_SUPPORTED_HARDWARE_LEVEL,
 				  &supportedHWLevel, 1);
 

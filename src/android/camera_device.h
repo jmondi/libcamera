@@ -33,7 +33,8 @@ class CameraDevice : protected libcamera::Loggable
 {
 public:
 	static std::shared_ptr<CameraDevice> create(unsigned int id,
-						    const std::shared_ptr<libcamera::Camera> &cam);
+						    const std::shared_ptr<libcamera::Camera> &cam,
+						    bool externalCameraSupport);
 	~CameraDevice();
 
 	int initialize();
@@ -66,7 +67,8 @@ protected:
 	std::string logPrefix() const override;
 
 private:
-	CameraDevice(unsigned int id, const std::shared_ptr<libcamera::Camera> &camera);
+	CameraDevice(unsigned int id, const std::shared_ptr<libcamera::Camera> &camera,
+		     bool externalCameraSupport);
 
 	struct Camera3RequestDescriptor {
 		Camera3RequestDescriptor(libcamera::Camera *camera,
@@ -131,6 +133,8 @@ private:
 	unsigned int maxJpegBufferSize_;
 
 	CameraMetadata lastSettings_;
+
+	const bool externalCameraSupport_;
 };
 
 #endif /* __ANDROID_CAMERA_DEVICE_H__ */

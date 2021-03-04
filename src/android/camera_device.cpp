@@ -685,10 +685,10 @@ std::tuple<uint32_t, uint32_t> CameraDevice::calculateStaticMetadataSize()
 {
 	/*
 	 * \todo Keep this in sync with the actual number of entries.
-	 * Currently: 54 entries, 874 bytes of static metadata
+	 * Currently: 55 entries, 879 bytes of static metadata
 	 */
-	uint32_t numEntries = 54;
-	uint32_t byteSize = 874;
+	uint32_t numEntries = 55;
+	uint32_t byteSize = 879;
 
 	/*
 	 * Calculate space occupation in bytes for dynamically built metadata
@@ -900,6 +900,11 @@ const camera_metadata_t *CameraDevice::getStaticMetadata()
 	char availableControlModes = ANDROID_CONTROL_MODE_AUTO;
 	staticMetadata_->addEntry(ANDROID_CONTROL_AVAILABLE_MODES,
 				  &availableControlModes, 1);
+
+	/* Distorsion correction. */
+	uint8_t distorsionCorrection = ANDROID_DISTORTION_CORRECTION_MODE_OFF;
+	staticMetadata_->addEntry(ANDROID_DISTORTION_CORRECTION_AVAILABLE_MODES,
+				  &distorsionCorrection, 1);
 
 	/* JPEG static metadata. */
 
@@ -1237,6 +1242,7 @@ const camera_metadata_t *CameraDevice::getStaticMetadata()
 		ANDROID_CONTROL_AWB_LOCK_AVAILABLE,
 		ANDROID_CONTROL_MAX_REGIONS,
 		ANDROID_CONTROL_SCENE_MODE_OVERRIDES,
+		ANDROID_DISTORTION_CORRECTION_AVAILABLE_MODES,
 		ANDROID_FLASH_INFO_AVAILABLE,
 		ANDROID_INFO_SUPPORTED_HARDWARE_LEVEL,
 		ANDROID_JPEG_AVAILABLE_THUMBNAIL_SIZES,

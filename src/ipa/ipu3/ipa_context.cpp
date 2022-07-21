@@ -181,25 +181,8 @@ namespace libcamera::ipa::ipu3 {
  */
 
 /**
- * \brief Default constructor for IPAFrameContext
- */
-IPAFrameContext::IPAFrameContext() = default;
-
-/**
- * \brief Construct a IPAFrameContext instance
- */
-IPAFrameContext::IPAFrameContext(uint32_t id, const ControlList &reqControls)
-	: frame(id), frameControls(reqControls)
-{
-	sensor = {};
-}
-
-/**
  * \var IPAFrameContext::frame
  * \brief The frame number
- *
- * \var IPAFrameContext::frameControls
- * \brief Controls sent in by the application while queuing the request
  *
  * \var IPAFrameContext::sensor
  * \brief Effective sensor values that were applied for the frame
@@ -209,6 +192,9 @@ IPAFrameContext::IPAFrameContext(uint32_t id, const ControlList &reqControls)
  *
  * \var IPAFrameContext::sensor.gain
  * \brief Analogue gain multiplier
+ *
+ * \var IPAFrameContext::error
+ * \brief The error flags for this frame context
  */
 
 } /* namespace libcamera::ipa::ipu3 */

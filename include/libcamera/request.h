@@ -47,6 +47,7 @@ public:
 	enum ErrorId {
 		NoError = 0,
 		ControlError = (1 << 0),
+		PFCError = (1 << 1),
 	};
 
 	using Errors = Flags<ErrorId>;

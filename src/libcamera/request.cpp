@@ -346,6 +346,10 @@ void Request::Private::timeout()
  * Control Error. At least one control was not applied correctly to the camera.
  * The application should compare the metadata to the requested control values
  * to check which controls weren't applied.
+ *
+ * \var Request::PFCError
+ * A per-frame-control error has occured. Controls that were expected to be set
+ * during the processing of this request were not processed in time.
  */
 
 /**

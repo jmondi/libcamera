@@ -123,6 +123,8 @@ int LensShadingCorrection::init([[maybe_unused]] IPAContext &context,
  * \copydoc libcamera::ipa::Algorithm::prepare
  */
 void LensShadingCorrection::prepare(IPAContext &context,
+				    [[maybe_unused]] unsigned int frame,
+				    [[maybe_unused]] RKISP1FrameContext &frameContext,
 				    rkisp1_params_cfg *params)
 {
 	if (context.activeState.frameCount > 0)

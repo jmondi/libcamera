@@ -85,7 +85,10 @@ void Filter::queueRequest(IPAContext &context,
 /**
  * \copydoc libcamera::ipa::Algorithm::prepare
  */
-void Filter::prepare(IPAContext &context, rkisp1_params_cfg *params)
+void Filter::prepare(IPAContext &context,
+		     [[maybe_unused]] unsigned int frame,
+		     [[maybe_unused]] RKISP1FrameContext &frameContext,
+		     rkisp1_params_cfg *params)
 {
 	auto &filter = context.activeState.filter;
 

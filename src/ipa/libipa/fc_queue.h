@@ -26,6 +26,11 @@ namespace ipa {
  */
 static constexpr uint32_t kMaxFrameContexts = 16;
 
+struct IPAFrameContext {
+	unsigned int frame;
+	Request::Errors error;
+};
+
 template<typename FrameContext>
 class FCQueue : private std::array<FrameContext, kMaxFrameContexts>
 {

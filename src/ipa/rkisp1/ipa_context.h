@@ -14,6 +14,8 @@
 
 #include <libcamera/geometry.h>
 
+#include <libipa/fc_queue.h>
+
 namespace libcamera {
 
 namespace ipa::rkisp1 {
@@ -78,7 +80,7 @@ struct IPAActiveState {
 	unsigned int frameCount;
 };
 
-struct IPAFrameContext {
+struct RKISP1FrameContext : public IPAFrameContext {
 };
 
 struct IPAContext {

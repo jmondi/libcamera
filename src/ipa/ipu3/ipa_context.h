@@ -14,7 +14,6 @@
 
 #include <libcamera/controls.h>
 #include <libcamera/geometry.h>
-#include <libcamera/request.h>
 
 #include <libipa/fc_queue.h>
 
@@ -74,22 +73,19 @@ struct IPAActiveState {
 	} toneMapping;
 };
 
-struct IPAFrameContext {
-	uint32_t frame;
+struct IPU3FrameContext : public IPAFrameContext {
 
 	struct {
 		uint32_t exposure;
 		double gain;
 	} sensor;
-
-	Request::Errors error;
 };
 
 struct IPAContext {
 	IPASessionConfiguration configuration;
 	IPAActiveState activeState;
 
-	FCQueue<IPAFrameContext> frameContexts;
+	FCQueue<IPU3FrameContext> frameContexts;
 };
 
 } /* namespace ipa::ipu3 */

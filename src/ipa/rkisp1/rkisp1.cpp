@@ -299,8 +299,10 @@ void IPARkISP1::unmapBuffers(const std::vector<unsigned int> &ids)
 
 void IPARkISP1::queueRequest(const uint32_t frame, const ControlList &controls)
 {
+	RKISP1FrameContext &frameContext = context_.frameContexts.initialise(frame);
+
 	for (auto const &algo : algorithms())
-		algo->queueRequest(context_, frame, controls);
+		algo->queueRequest(context_, frame, frameContext, controls);
 }
 
 void IPARkISP1::fillParamsBuffer(const uint32_t frame, const uint32_t bufferId)

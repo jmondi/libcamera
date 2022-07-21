@@ -22,6 +22,7 @@ public:
 	~ColorProcessing() = default;
 
 	void queueRequest(IPAContext &context, const uint32_t frame,
+			  RKISP1FrameContext &frameContext,
 			  const ControlList &controls) override;
 	void prepare(IPAContext &context, unsigned int frame,
 		     RKISP1FrameContext &frameContext,

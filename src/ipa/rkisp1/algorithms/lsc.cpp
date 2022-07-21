@@ -125,7 +125,7 @@ int LensShadingCorrection::init([[maybe_unused]] IPAContext &context,
 void LensShadingCorrection::prepare(IPAContext &context,
 				    rkisp1_params_cfg *params)
 {
-	if (context.frameContext.frameCount > 0)
+	if (context.activeState.frameCount > 0)
 		return;
 
 	if (!initialized_)

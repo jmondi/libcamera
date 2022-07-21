@@ -41,7 +41,7 @@ struct IPASessionConfiguration {
 	} hw;
 };
 
-struct IPAFrameContext {
+struct IPAActiveState {
 	struct {
 		uint32_t exposure;
 		double gain;
@@ -78,9 +78,12 @@ struct IPAFrameContext {
 	unsigned int frameCount;
 };
 
+struct IPAFrameContext {
+};
+
 struct IPAContext {
 	IPASessionConfiguration configuration;
-	IPAFrameContext frameContext;
+	IPAActiveState activeState;
 };
 
 } /* namespace ipa::rkisp1 */

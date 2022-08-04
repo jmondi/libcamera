@@ -22,15 +22,15 @@ namespace ipa {
 
 /**
  * \class FCQueue
- * \brief A support class for queueing Frame Context instances through the IPA
- * \tparam FrameContext The IPA specific Frame Context type for this queue
+ * \brief A support class for queueing FrameContext instances through the IPA
+ * \tparam FrameContext The IPA specific FrameContext derived class type
  *
- * The Frame Context Queue provides a simple circular buffer implementation to
+ * The frame context queue provides a simple circular buffer implementation to
  * store IPA specific context for each frame through its lifetime within the
  * IPA.
  *
- * FrameContexts are expected to be referenced by a monotonically increasing
- * sequence count referring to a Frame sequence.
+ * FrameContext instances are expected to be referenced by a monotonically
+ * increasing sequence count corresponding to a frame sequence number.
  *
  * A FrameContext is initialised for a given frame when the corresponding
  * Request is first queued into the IPA. From that point on the FrameContext can
@@ -44,22 +44,35 @@ namespace ipa {
  * a given frame, and processing of any ISP related controls and statistics for
  * the same corresponding image.
  *
- * IPA specific FrameContexts should inherit from the IPAFrameContext to support
- * the minimum required features for a FrameContext, including the frame number
- * and error flags that relate to the frame.
+ * IPA specific frame context implementations shall inherit from the
+ * IPAFrameContext base class to support the minimum required features for a
+ * FrameContext, including the frame number and the error flags that relate to
+ * the frame.
  *
  * FrameContexts are overwritten when they are recycled and re-initialised by
- * the first access made on them by either initialise(frame) or get(frame). If a
- * FrameContext is first accessed through get(frame) before calling initialise()
- * a PFCError is automatically raised on the FrameContext to be transferred to
- * the Request when it completes.
+ * the first access made on them by either initialise(frame) or get(frame). It
+ * is required that the number of available slots in the frame context queue is
+ * larger or equal to the maximum number of in-flight requests a pipeline can
+ * handle to avoid overwriting frame context instances that still have to be
+ * processed.
+ *
+ * In the case an application does not queue requests to the Camera fast
+ * enough, frames can be produced and processed by the IPA without a
+ * corresponding Request being queued. In this case the IPA algorithm
+ * will try to access the FrameContext with a call to get() before it
+ * had been initialized at queueRequest() time. In this case there
+ * is now way the controls associated with the late Request could be
+ * applied in time, as the frame as already been processed by the IPA,
+ * the PFCError flag is automatically raised on the FrameContext.
  */
 
 /**
  * \fn FCQueue::clear()
- * \brief Reinitialise all data on the queue
+ * \brief Clear the context queue
  *
  * Reset the queue and ensure all FrameContext slots are re-initialised.
+ * IPA modules are expected to clear the frame context queue at the beginning of
+ * a new streaming session, in IPAModule::start().
  */
 
 /**
@@ -73,6 +86,9 @@ namespace ipa {
  *
  * If the FrameContext was already initialized for this sequence, a warning will
  * be reported and the previously initialized FrameContext is returned.
+ *
+ * Frame contexts are expected to be initialised when a Request is first passed
+ * to the IPA module in IPAModule::queueRequest().
  *
  * \return A reference to the FrameContext for sequence \a frame
  */

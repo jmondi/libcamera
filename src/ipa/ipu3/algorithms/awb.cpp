@@ -387,7 +387,9 @@ void Awb::calculateWBGains(const ipu3_uapi_stats_3a *stats)
 /**
  * \copydoc libcamera::ipa::Algorithm::process
  */
-void Awb::process(IPAContext &context, [[maybe_unused]] IPAFrameContext *frameContext,
+void Awb::process(IPAContext &context,
+		  [[maybe_unused]] unsigned int frame,
+		  [[maybe_unused]] IPU3FrameContext &frameContext,
 		  const ipu3_uapi_stats_3a *stats)
 {
 	calculateWBGains(stats);
@@ -429,7 +431,10 @@ constexpr uint16_t Awb::gainValue(double gain)
 /**
  * \copydoc libcamera::ipa::Algorithm::prepare
  */
-void Awb::prepare(IPAContext &context, ipu3_uapi_params *params)
+void Awb::prepare(IPAContext &context,
+		  [[maybe_unused]] unsigned int frame,
+		  [[maybe_unused]] IPU3FrameContext &frameContext,
+		  ipu3_uapi_params *params)
 {
 	/*
 	 * Green saturation thresholds are reduced because we are using the

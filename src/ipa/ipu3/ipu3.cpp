@@ -38,6 +38,8 @@
 #include "algorithms/tone_mapping.h"
 #include "libipa/camera_sensor_helper.h"
 
+#include "ipa_context.h"
+
 /* Minimum grid width, expressed as a number of cells */
 static constexpr uint32_t kMinGridWidth = 16;
 /* Maximum grid width, expressed as a number of cells */
@@ -348,6 +350,9 @@ int IPAIPU3::start()
  */
 void IPAIPU3::stop()
 {
+	/* Clean the IPA context at the end of the streaming session. */
+	context_.frameContexts.clear();
+	context_ = {};
 }
 
 /**
@@ -454,11 +459,6 @@ int IPAIPU3::configure(const IPAConfigInfo &configInfo,
 
 	calculateBdsGrid(configInfo.bdsOutputSize);
 
-	/* Clean IPAActiveState at each reconfiguration. */
-	context_.activeState = {};
-	IPAFrameContext initFrameContext;
-	context_.frameContexts.fill(initFrameContext);
-
 	if (!validateSensorControls()) {
 		LOG(IPAIPU3, Error) << "Sensor control validation failed.";
 		return -EINVAL;
@@ -538,8 +538,10 @@ void IPAIPU3::fillParamsBuffer(const uint32_t frame, const uint32_t bufferId)
 	 */
 	params->use = {};
 
+	IPU3FrameContext frameContext = context_.frameContexts.get(frame);
+
 	for (auto const &algo : algorithms_)
-		algo->prepare(context_, params);
+		algo->prepare(context_, frame, frameContext, params);
 
 	paramsBufferReady.emit(frame);
 }
@@ -569,7 +571,7 @@ void IPAIPU3::processStatsBuffer(const uint32_t frame,
 	const ipu3_uapi_stats_3a *stats =
 		reinterpret_cast<ipu3_uapi_stats_3a *>(mem.data());
 
-	IPAFrameContext &frameContext = context_.frameContexts[frame % kMaxFrameContexts];
+	IPU3FrameContext &frameContext = context_.frameContexts.get(frame);
 
 	if (frameContext.frame != frame)
 		LOG(IPAIPU3, Warning) << "Frame " << frame << " does not match its frame context";
@@ -582,7 +584,7 @@ void IPAIPU3::processStatsBuffer(const uint32_t frame,
 	ControlList ctrls(controls::controls);
 
 	for (auto const &algo : algorithms_)
-		algo->process(context_, &frameContext, stats);
+		algo->process(context_, frame, frameContext, stats);
 
 	setControls(frame);
 
@@ -617,8 +619,10 @@ void IPAIPU3::processStatsBuffer(const uint32_t frame,
  */
 void IPAIPU3::queueRequest(const uint32_t frame, const ControlList &controls)
 {
-	/* \todo Start processing for 'frame' based on 'controls'. */
-	context_.frameContexts[frame % kMaxFrameContexts] = { frame, controls };
+	IPU3FrameContext &frameContext = context_.frameContexts.initialise(frame);
+
+	for (auto const &algo : algorithms_)
+		algo->queueRequest(context_, frame, frameContext, controls);
 }
 
 /**

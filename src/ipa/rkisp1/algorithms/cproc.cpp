@@ -38,9 +38,10 @@ LOG_DEFINE_CATEGORY(RkISP1CProc)
  */
 void ColorProcessing::queueRequest(IPAContext &context,
 				   [[maybe_unused]] const uint32_t frame,
+				   [[maybe_unused]] RKISP1FrameContext &frameContext,
 				   const ControlList &controls)
 {
-	auto &cproc = context.frameContext.cproc;
+	auto &cproc = context.activeState.cproc;
 
 	const auto &brightness = controls.get(controls::Brightness);
 	if (brightness) {
@@ -71,9 +72,11 @@ void ColorProcessing::queueRequest(IPAContext &context,
  * \copydoc libcamera::ipa::Algorithm::prepare
  */
 void ColorProcessing::prepare(IPAContext &context,
+			      [[maybe_unused]] unsigned int frame,
+			      [[maybe_unused]] RKISP1FrameContext &frameContext,
 			      rkisp1_params_cfg *params)
 {
-	auto &cproc = context.frameContext.cproc;
+	auto &cproc = context.activeState.cproc;
 
 	/* Check if the algorithm configuration has been updated. */
 	if (!cproc.updateParams)

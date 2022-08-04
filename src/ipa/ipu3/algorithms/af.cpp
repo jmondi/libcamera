@@ -116,7 +116,10 @@ Af::Af()
 /**
  * \copydoc libcamera::ipa::Algorithm::prepare
  */
-void Af::prepare(IPAContext &context, ipu3_uapi_params *params)
+void Af::prepare(IPAContext &context,
+		 [[maybe_unused]] unsigned int frame,
+		 [[maybe_unused]] IPU3FrameContext &frameContext,
+		 ipu3_uapi_params *params)
 {
 	const struct ipu3_uapi_grid_config &grid = context.configuration.af.afGrid;
 	params->acc_param.af.grid_cfg = grid;
@@ -406,6 +409,7 @@ bool Af::afIsOutOfFocus(IPAContext context)
 /**
  * \brief Determine the max contrast image and lens position.
  * \param[in] context The IPA context.
+ * \param[in] frame The frame context sequence number
  * \param[in] frameContext The current frame context
  * \param[in] stats The statistics buffer of IPU3.
  *
@@ -420,7 +424,9 @@ bool Af::afIsOutOfFocus(IPAContext context)
  *
  * [1] Hill Climbing Algorithm, https://en.wikipedia.org/wiki/Hill_climbing
  */
-void Af::process(IPAContext &context, [[maybe_unused]] IPAFrameContext *frameContext,
+void Af::process(IPAContext &context,
+		 [[maybe_unused]] unsigned int frame,
+		 [[maybe_unused]] IPU3FrameContext &frameContext,
 		 const ipu3_uapi_stats_3a *stats)
 {
 	/* Evaluate the AF buffer length */

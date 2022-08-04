@@ -44,9 +44,10 @@ static constexpr uint32_t kFiltModeDefault = 0x000004f2;
  */
 void Filter::queueRequest(IPAContext &context,
 			  [[maybe_unused]] const uint32_t frame,
+			  [[maybe_unused]] RKISP1FrameContext &frameContext,
 			  const ControlList &controls)
 {
-	auto &filter = context.frameContext.filter;
+	auto &filter = context.activeState.filter;
 
 	const auto &sharpness = controls.get(controls::Sharpness);
 	if (sharpness) {
@@ -85,9 +86,12 @@ void Filter::queueRequest(IPAContext &context,
 /**
  * \copydoc libcamera::ipa::Algorithm::prepare
  */
-void Filter::prepare(IPAContext &context, rkisp1_params_cfg *params)
+void Filter::prepare(IPAContext &context,
+		     [[maybe_unused]] unsigned int frame,
+		     [[maybe_unused]] RKISP1FrameContext &frameContext,
+		     rkisp1_params_cfg *params)
 {
-	auto &filter = context.frameContext.filter;
+	auto &filter = context.activeState.filter;
 
 	/* Check if the algorithm configuration has been updated. */
 	if (!filter.updateParams)

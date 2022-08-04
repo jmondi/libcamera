@@ -70,6 +70,8 @@ namespace ipa {
  * \fn Algorithm::prepare()
  * \brief Fill the \a params buffer with ISP processing parameters for a frame
  * \param[in] context The shared IPA context
+ * \param[in] frame The frame context sequence number
+ * \param[in] frameContext The FrameContext for this frame
  * \param[out] params The ISP specific parameters.
  *
  * This function is called for every frame when the camera is running before it
@@ -86,6 +88,7 @@ namespace ipa {
  * \brief Provide control values to the algorithm
  * \param[in] context The shared IPA context
  * \param[in] frame The frame number to apply the control values
+ * \param[in] frameContext The current frame's context
  * \param[in] controls The list of user controls
  *
  * This function is called for each request queued to the camera. It provides
@@ -101,6 +104,7 @@ namespace ipa {
  * \fn Algorithm::process()
  * \brief Process ISP statistics, and run algorithm operations
  * \param[in] context The shared IPA context
+ * \param[in] frame The frame context sequence number
  * \param[in] frameContext The current frame's context
  * \param[in] stats The IPA statistics and ISP results
  *

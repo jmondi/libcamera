@@ -119,9 +119,11 @@ int GammaSensorLinearization::init([[maybe_unused]] IPAContext &context,
  * \copydoc libcamera::ipa::Algorithm::prepare
  */
 void GammaSensorLinearization::prepare(IPAContext &context,
+				       [[maybe_unused]] unsigned int frame,
+				       [[maybe_unused]] RKISP1FrameContext &frameContext,
 				       rkisp1_params_cfg *params)
 {
-	if (context.frameContext.frameCount > 0)
+	if (context.activeState.frameCount > 0)
 		return;
 
 	if (!initialized_)

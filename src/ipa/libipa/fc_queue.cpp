@@ -84,7 +84,7 @@ namespace ipa {
  *
  * Obtains an existing FrameContext from the queue and returns it to the caller.
  *
- * If the FrameContext is not correctly intiialised for the \a frame, it will be
+ * If the FrameContext is not correctly initialised for the \a frame, it will be
  * initialised and a PFCError will be flagged on the context to be transferred
  * to the Request when it completes.
  *

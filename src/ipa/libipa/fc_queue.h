@@ -29,7 +29,7 @@ namespace ipa {
 static constexpr uint32_t kMaxFrameContexts = 16;
 
 template<typename FrameContext>
-class FCQueue : public std::array<FrameContext, kMaxFrameContexts>
+class FCQueue : private std::array<FrameContext, kMaxFrameContexts>
 {
 private:
 	void initialise(FrameContext &frameContext, const uint32_t frame)

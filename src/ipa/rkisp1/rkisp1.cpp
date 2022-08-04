@@ -49,7 +49,7 @@ public:
 	int init(const IPASettings &settings, unsigned int hwRevision,
 		 ControlInfoMap *ipaControls) override;
 	int start() override;
-	void stop() override {}
+	void stop() override;
 
 	int configure(const IPACameraSensorInfo &info,
 		      const std::map<uint32_t, IPAStream> &streamConfig,
@@ -184,9 +184,18 @@ int IPARkISP1::init(const IPASettings &settings, unsigned int hwRevision,
 
 int IPARkISP1::start()
 {
+	/* Clean the IPA context before starting the streaming session. */
+	context_ = {};
+
 	setControls(0);
 
 	return 0;
+}
+
+void IPARkISP1::stop()
+{
+	/* Clean the IPA context at the end of the streaming session. */
+	context_ = {};
 }
 
 /**
@@ -227,9 +236,6 @@ int IPARkISP1::configure([[maybe_unused]] const IPACameraSensorInfo &info,
 	LOG(IPARkISP1, Info)
 		<< "Exposure: " << minExposure << "-" << maxExposure
 		<< " Gain: " << minGain << "-" << maxGain;
-
-	/* Clean context at configuration */
-	context_ = {};
 
 	/* Set the hardware revision for the algorithms. */
 	context_.configuration.hw.revision = hwRevision_;

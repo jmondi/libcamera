@@ -350,6 +350,9 @@ int IPAIPU3::start()
  */
 void IPAIPU3::stop()
 {
+	/* Clean the IPA context at the end of the streaming session. */
+	context_.frameContexts.clear();
+	context_ = {};
 }
 
 /**
@@ -455,10 +458,6 @@ int IPAIPU3::configure(const IPAConfigInfo &configInfo,
 	sensorCtrls_ = configInfo.sensorControls;
 
 	calculateBdsGrid(configInfo.bdsOutputSize);
-
-	/* Clean IPAActiveState at each reconfiguration. */
-	context_.activeState = {};
-	context_.frameContexts.clear();
 
 	if (!validateSensorControls()) {
 		LOG(IPAIPU3, Error) << "Sensor control validation failed.";

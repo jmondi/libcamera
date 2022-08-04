@@ -49,6 +49,13 @@ public:
 		/*
 		 * Do not re-initialise if a get() call has already fetched this
 		 * frame context to preseve the error flags already raised.
+		 *
+		 * \todo If the the sequence number of the context to initialise
+		 * is smaller than the sequence number of the queue slot to use,
+		 * it means that we had a serious request underrun and more
+		 * frames than the queue size has been produced since the last
+		 * time the application has queued a request. Does this deserve
+		 * an error condition ?
 		 */
 		if (frame != 0 && frame <= frameContext.frame)
 			LOG(FCQueue, Warning)
@@ -62,6 +69,18 @@ public:
 	FrameContext &get(uint32_t frame)
 	{
 		FrameContext &frameContext = this->at(frame & kMaxFrameContexts);
+
+		/*
+		 * If the IPA algorithms try to access a frame context slot which
+		 * has been already overwritten by a newer context, it means the
+		 * frame context queue has overflowed and the desired context
+		 * has been forever lost. The pipeline handler shall avoid
+		 * queueing more requests to the IPA than the frame context
+		 * queue size.
+		 */
+		if (frame < frameContext.frame)
+			LOG(FCQueue, Fatal)
+				<< "Frame " << frame << " has been overwritten";
 
 		if (frame == frameContext.frame)
 			return frameContext;

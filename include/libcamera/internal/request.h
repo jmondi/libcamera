@@ -38,10 +38,11 @@ public:
 	void complete();
 	void cancel();
 	void reuse();
-	void setErrorFlags(ErrorFlags flags);
 
 	void prepare(std::chrono::milliseconds timeout = 0ms);
 	Signal<> prepared;
+
+	void setError(Errors error);
 
 private:
 	friend class PipelineHandler;
@@ -61,7 +62,7 @@ private:
 	std::map<FrameBuffer *, std::unique_ptr<EventNotifier>> notifiers_;
 	std::unique_ptr<Timer> timer_;
 
-	ErrorFlags error_;
+	Errors error_;
 };
 
 } /* namespace libcamera */

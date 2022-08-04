@@ -44,12 +44,12 @@ public:
 		ReuseBuffers = (1 << 0),
 	};
 
-	enum ErrorFlag {
+	enum ErrorId {
 		NoError = 0,
 		ControlError = (1 << 0),
 	};
 
-	using ErrorFlags = Flags<ErrorFlag>;
+	using Errors = Flags<ErrorId>;
 
 	using BufferMap = std::map<const Stream *, FrameBuffer *>;
 
@@ -68,7 +68,7 @@ public:
 	uint32_t sequence() const;
 	uint64_t cookie() const { return cookie_; }
 	Status status() const { return status_; }
-	ErrorFlags error() const;
+	Errors error() const;
 
 	bool hasPendingBuffers() const;
 
